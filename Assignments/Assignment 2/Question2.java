@@ -4,11 +4,10 @@
 // For COMP 248 Section EC – Summer 2019
 // --------------------------------------------------------
 
-/* This program describes a user's Uno card. 
- * Uno cards have a value and a colour, 
- *  
- *  
- *  */
+
+// This program translates a phrase from English to Ubbi Dubbi. 
+
+
 
 
 import java.util.Scanner;
@@ -18,80 +17,88 @@ public class Question2 {
 	public static void main(String[] args) {
 
 		// Declaring variables
-		Scanner keyIn = new Scanner(System.in);   // Create Scanner object
-		String userInput, ubbiDubbi = "", words[];
-		char letters[];
-		int nbWords, i, j;
+		Scanner keyIn = new Scanner(System.in);   	// Create Scanner object
+		String userInput, ubbiDubbi;				// userInput: user's input, ubbiDubbi: the translated sentence
+		String words[], addUb = "";					/* words: each word of the sentence, addUb: where to add the "ub"s,  
+														note: these two variables are updated throughout the code) */ 
+		int i, j; 									// i: number of words, j: number of characters of user's input
 
 		// Welcome banner 
 		System.out.println("Welcome to my Ubbi Dubbi program!" + '\n');
-
 		
 		// User prompt 
 		System.out.println("Please enter the English sentence you want translated into Ubbi Dubbi");
-		System.out.println("(Be sure to have 1 space between words and to not have any spaces at the fron and end of the sentence):");
+		System.out.println("(Be sure to have 1 space between words and to not have any spaces at the front and end of the sentence):");
 		
 		// Reading user's input
 		userInput = keyIn.nextLine();
-		words = userInput.split(" "); 
-		nbWords = words.length;
-		
-		// Main algorithm 
-		for (i = 0; i < nbWords; i++) {
+        words = userInput.split(" ");
+        
+        
+        
+        // Preliminary check: for finding where to add "ub" (for now, just looking for vowels )
+        for (i = 0; i < words.length; i++) {
+        	
+            // For each word, replace all vowels (except for "e"s at end of word) with "V"  
+		    words[i] = words[i] + " ";					// Add space to check if last letter is "e"
+		    words[i] = words[i].replace("e ", "C ");	// If last letter is "e", treat as consonant
+		    words[i] = words[i].replace("a", "V");
+		    words[i] = words[i].replace("e", "V");
+		    words[i] = words[i].replace("i", "V");
+		    words[i] = words[i].replace("o", "V");
+		    words[i] = words[i].replace("u", "V");
+		    words[i] = words[i].substring(0, words[i].length() -1);  // Removing space that was added
 			
-			if (words[i].length() == 1)
-				words[i] = "ub" + words[i];
-			else if (words[i].length() == 2)
-				words[i] = "ub" + words[i].substring(0,1) + "ub" + words[i].substring(1);
-			else {
-				// letters of the i-th word
-				letters = words[i].toCharArray();
-				
-				// If 'e' is the last letter of a word, treat it as a constant 
-				if (letters[letters.length -1] == 'e')
-					letters[letters.length -1] = '0';
-				
-				// Finding the indices of the vowels for i-th word
-				for (j = 0; j < letters.length; j++) {
-					switch(letters[j]) {
-						case 'a': case 'e': case 'i': case 'o': case 'u':
-							letters[j] = '1';
-							break;
-						default: 
-							letters[j] = '0';
-					}
-					
-					// If there are 2+ consecutive vowels, treat the second as a special consonant
-					if (j > 0 && letters[j] == '1' && (letters[j-1] == '1' || letters[j-1] == '2'))
-						letters[j] = '2';
-					//System.out.println(letters[j]); // TO DELETE 
-				}
-				
-				// Starting from the end of the word and moving left, add 'ub' to indices with '1'
-				for (j = letters.length -1 ; j >= 0; j--) {
-					if (letters[j] == '1')
-						words[i] = words[i].substring(0,j).concat("ub") + words[i].substring(j);
-				}
-				
-			}
-			
-			
-			// Regrouping the translated Ubbi Dubbi words back into a sentence 
+			// Regrouping the modified 'words' back into one string (i.e. a sentence)
 			if (i == 0)
-				ubbiDubbi = words[i];
+				addUb = words[i];
 			else 
-				ubbiDubbi = ubbiDubbi + " " + words[i];
-
+				addUb = addUb + " " + words[i];
 		}
+
+	    
+	    // If there are 2+ consecutive vowels, treat the trailing vowel(s) as consonant(s)
+		for (j = 1; j < addUb.length() - 1; j++) {
+			if (addUb.charAt(j) == 'V' && (addUb.charAt(j-1) == 'V' || addUb.charAt(j-1) == 'C'))
+				addUb = addUb.substring(0,j) + "C" + addUb.substring(j+1);
+		}
+	
+		
+		// Finalizing where to add "ub" for all words 
+		words = addUb.split(" ");
+        for (i = 0; i < words.length; i++) {
+    		// Considering special cases for words of length 1 or 2
+        	if (words[i].length() == 1) 
+        		// If word is 1 character, add one "ub" 
+        		words[i] = "V";
+        	else if (words[i].length() == 2) 
+        		// If word is 2 characters, add two "ub"'s
+        		words[i] = "VV";
+        	else 
+        		// Otherwise, proceed as usual 
+        		words[i] = words[i];
+        	
+        	// Regrouping the modified 'words' back into one string (i.e. a sentence)
+			if (i == 0)
+				addUb = words[i];
+			else 
+				addUb = addUb + " " + words[i];
+        }
+        
+        // Adding "ub" where necessary. We move from right to left to keep indices in right place
+        ubbiDubbi = userInput;
+		for (j = addUb.length() - 1; j >= 0; j--) {
+			if (addUb.charAt(j) == 'V')
+				ubbiDubbi = ubbiDubbi.substring(0,j).concat("ub") + ubbiDubbi.substring(j);
+		}
+		
 		
 		// Displaying output
 		System.out.println("Translated sentence:");
 		System.out.println(ubbiDubbi);
 		System.out.println("Have fun speaking it!!!");
 
-
 		// Closing scanner 
 		keyIn.close();
-		
 	}
 }
