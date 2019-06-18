@@ -1,0 +1,194 @@
+// ------------------------------------------------------- 
+// Assignment 3 - Question 3
+// Written by: Spyros Orfanos - 40032280
+// For COMP 248 Section EC – Summer 2019
+// --------------------------------------------------------
+
+/* Program description: 
+ * - An array of size N (determined by user) of objects from the class Complex is created
+ * - It initializes the first N-2 objects in the array randomly 
+ * - The last two array elements are initialized by copying one of the preceding array objects (chosen randomly)
+ * - The largest and smallest Complex objects in the array are displayed
+ * - The sum and product of the contents of the array are calculated, results are displayed
+ * - The sign of the real part is changed for objects in even indexes, contents of array are displayed 
+ * - The sign of the imaginary part is changed for objects in odd indexes, contents of array are displayed 
+ */
+
+/* Some notes on simulation: 
+ * 
+ * (1) Random Complex number
+ *  	- To generate a random number between -100 and 100, we first generate a random number U between 0 and 1
+ *  	- We apply the linear transformation f(u) = 200*u - 100 to the generated number 
+ *  	- We now have a random number, say a, between -100 and 100
+ *  	- Repeat this process to generate another number, say b
+ *  	- Then, take a + b*i as the complex number 
+ *  
+ * (2) Randomly assigning second last object of array
+ *		- Firstly, ((userN-2)* Math.random()); generates a random number in (0, userN-2)
+ * 		- So, (int) ((userN-2)* Math.random()); generates a random integer in the set {0,1,...,userN-3}
+ * 		- Thus, theArray[userN-2] is randomly assigned as one of the preceding array elements
+ * 		 *** Same logic is used for the last entry ***
+*/
+
+
+import java.util.Scanner;
+
+public class DriverQ3 {
+	
+	
+	// The smallest method returns the index of the smallest complex number in a 1D array of complex objects
+	public static boolean smallest(Complex nb1, Complex nb2) {	
+		if (nb1.getReal() >  nb2.getReal()) 
+			return false; 
+		if (nb1.getReal() == nb2.getReal() && nb1.getImag() >  nb2.getImag())
+			return false; 
+		return true; 
+	}
+	
+	
+	// The smallest method returns the index of the smallest complex number in a 1D array of complex objects
+	public static boolean biggest(Complex nb1, Complex nb2) {	
+		if (nb1.getReal() <  nb2.getReal()) 
+			return false; 
+		if (nb1.getReal() == nb2.getReal() && nb1.getImag() <  nb2.getImag())
+			return false; 
+		return true; 
+	}
+	
+
+	/* The smallest method returns the index of the smallest complex number in a 1D array of complex objects
+	public static int smallest(Complex[] anArray) {	
+		// Start by setting the first complex number as the smallest 
+		Complex min = anArray[0];
+		int minIndex = 0;
+		// Compare min with other elements of the array 
+		for (int i = 1; i < anArray.length; i++) {
+			// if it is bigger than another number, set the other number as the min & record its index
+			if 	(min.getReal() >  anArray[i].getReal()) {
+				min = anArray[i];
+				minIndex = i;
+			}
+			else if (min.getReal() == anArray[i].getReal() && min.getImag() >  anArray[i].getImag()) {
+				min = anArray[i];
+				minIndex = i;
+			}
+		}
+		return minIndex;
+	}
+	
+	// The largest method returns the index of the largest complex number in a 1D array of complex objects 
+	public static int largest(Complex[] anArray) {
+		// Start by setting the first complex number as the largest 
+		Complex max = anArray[0];
+		int maxIndex = 0;
+		// Compare min with other elements of the array 
+		for (int i = 1; i < anArray.length; i++) {
+			// if max is smaller than another number, set the other number as the max & record its index
+			if 	(max.getReal() < anArray[i].getReal()) {
+				max = anArray[i];
+				maxIndex = i;
+			}
+			else if (max.getReal() == anArray[i].getReal() && max.getImag() <  anArray[i].getImag()) {
+				max = anArray[i];
+				maxIndex = i;
+			}
+		}
+		return maxIndex;
+	}
+	
+	*/ 
+	
+	
+	// The main method 
+	public static void main(String[] args) {
+		
+		// Declaring variables
+		Scanner keyIn = new Scanner(System.in);   	// Create Scanner object
+		Complex[] theArray;							// theArray: 1-D array of complex numbers 
+		int userN, i; 								// userN: the integer the user entered, i: counter variable
+		int randInd, minInd, maxInd;				// randInd: a random index, min/maxInd: index of smallest/largest complex nb
+		double randReal, randImag;					// randReal&randImag: random numbers used to create a complex number  
+		Complex sumTot = new Complex();				// additive neutral identity for complex numbers 
+		Complex prodTot = new Complex(1, 0);		// multiplicative neutral identity for complex numbers 
+		
+		// Welcome banner 
+		System.out.println(" ---------------------------------------------- ");
+		System.out.println("  Let's play with arrays of complex objects  ");
+		System.out.println(" ---------------------------------------------- " + '\n');
+		
+		// User prompt (keep prompting until integer between 4 and 12, inclusive, is entered) 
+		do {
+			System.out.print("How many complex numbers do you want (max of 12 at least 4): ");
+			userN = keyIn.nextInt();
+		}
+		while (!(4 <= userN && userN <= 12));
+		
+		// Creating the array of size userN by userN 
+		theArray = new Complex[userN];
+
+		// Assigning random numbers for N-2 object of the array 
+		for (i = 0; i < theArray.length - 2; i++) {
+			// Generating two random numbers between -100 and 100
+			randReal = 200*Math.random() - 100;
+			randImag = 200*Math.random() - 100;
+			// Assigning object in the array
+			theArray[i] =  new Complex(randReal, randImag);
+		}
+		
+		// Assigning second last object in the array
+		randInd = (int) ((userN-2)* Math.random());
+		theArray[userN-2] = new Complex(theArray[randInd]);
+		
+		// Assigning last object in the array
+		randInd = (int) ((userN-1)* Math.random());
+		theArray[userN-1] = new Complex(theArray[randInd]);
+		
+		// Printing out the array contents
+		System.out.println("\n" + "Here are the complex numbers generated:");
+		for (i = 0; i < userN; i++)
+			System.out.println("In index location " + i + " is complex number " + theArray[i]);
+		
+		// Finding smallest complex number 
+		minInd = smallest(theArray);
+		System.out.println("\n" + "The smallest complex number is in index location " + minInd + " and is " + theArray[minInd]);
+		
+		// Finding largest complex number 
+		maxInd = largest(theArray);
+		System.out.println("\n" + "The largest complex number is in index location " + maxInd + " and is " + theArray[maxInd]);
+		
+		// Sum and Product of all the complex numbers (we start with additive and multiplicative identity complex numbers) 
+		for (i = 0; i < userN; i++) {
+			sumTot = sumTot.addition(theArray[i]);
+			prodTot = Complex.multiply(prodTot, theArray[i]);
+		}
+			
+		// Printing sum & product of all complex numbers 
+		System.out.println("\n" + "The sum of all of the complex numbers is "  + sumTot);
+		System.out.println("\n" + "The product of all of the complex numbers is "  + prodTot);
+		
+		// Changing sign of real part of complex numbers (for even indexed elements)
+		System.out.println("\n" + "Here are the complex numbers with real parts changed:");
+		for (i = 0; i < userN; i++) {
+			if (i % 2 == 0) 
+				theArray[i] = new Complex(-1*theArray[i].getReal(), theArray[i].getImag());
+			// Printing result
+			System.out.println("In index location " + i + " is complex number " + theArray[i]);
+		}
+		
+		// Changing sign of imaginary part of complex numbers (for odd indexed elements) 
+		System.out.println("\n" + "Here are the complex numbers with imaginary parts changed:");
+		for (i = 0; i < userN; i++) {
+			if (i % 2 == 1) 
+				theArray[i] = new Complex(theArray[i].getReal(), -1*theArray[i].getImag());
+			// Printing result
+			System.out.println("In index location " + i + " is complex number " + theArray[i]);
+		}
+		
+		// Closing message 
+		System.out.println("\n" + "All done!");
+
+		// Closing the scanner 		
+		keyIn.close();
+	}
+
+}
